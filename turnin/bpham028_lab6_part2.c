@@ -133,7 +133,7 @@ int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
-	TimerSet(100);
+	TimerSet(300);
 	TimerOn();
 	State = Init;
 //	unsigned char tmpB = 0x00;

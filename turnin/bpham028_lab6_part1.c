@@ -18,9 +18,7 @@ volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
 
-enum States {Start, Init, First, Second, Third, Press, Release} State;
-
-unsigned char tmpA = 0x00;
+enum States {Start, Init, First, Second, Third} State;
 
 void TimerSet(unsigned long M) {
         _avr_timer_M = M;
@@ -60,8 +58,6 @@ ISR(TIMER1_COMPA_vect) {
 
 void TickBlink() {
 
-	tmpA = ~PINA;
-
 	switch (State) {
 		case(Start):
 			State = Init;
@@ -70,35 +66,14 @@ void TickBlink() {
 			State = First;
 			break;
 		case(First):
-			if (tmpA) {
-				State = Press;
-			} else {
-				State = Second;
-			} break;
+			State = Second;
+			break;
 		case(Second):
-                        if (tmpA) {
-                                State = Press;
-                        } else {
-				State = Third;
-			} break;
+			State = Third;
+			break;
 		case(Third):
-                        if (tmpA) {
-                                State = Press;
-                        } else {	
-				State = First;
-			} break;
-		case(Press): 
-			if (tmpA) {
-				State = Press;
-			} else {
-				State = Release;
-			} break;
-		case(Release):
-			if (tmpA) {
-				State = Init;
-			} else {
-				State = Release;
-			} break;
+			State = First;
+			break;
 		default:
 			State = Start;
 			break;
@@ -119,10 +94,6 @@ void TickBlink() {
 		case(Third):
 			PORTB = 0x04;
 			break;
-		case(Press):
-			break;
-		case(Release):
-			break;
 		default:
 			PORTB = 0x00;
 			break;
@@ -131,9 +102,8 @@ void TickBlink() {
 	
 int main(void) {
     /* Insert DDR and PORT initializations */
-	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
-	TimerSet(100);
+	TimerSet(1000);
 	TimerOn();
 	State = Init;
 //	unsigned char tmpB = 0x00;
